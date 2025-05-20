@@ -1,2 +1,2 @@
-# disarray
-disArray game repo
+# pirate plunderer
+priat plunderer game repo
