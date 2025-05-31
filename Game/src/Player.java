@@ -1,23 +1,17 @@
-public class Player
+public class Player extends Entity
 {
-    private int health;
-    public Player()
+    public Player (int x, int y, int hp, int dmg, int keyValue)
     {
-        health = 3;
+        super(x, y, hp, dmg, keyValue);
     }
-    public void takeDamage()
+    
+    public boolean die()
     {
-        health --;
-        if(health==0)
+        if (hp == 0)
         {
-            die();
+            /* Die code */
+            return true;
         }
+        return false;
     }
-    public void die()
-    {
-        System.out.println("you have died");
-    }
-
-
-
 }
