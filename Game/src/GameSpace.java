@@ -15,7 +15,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 {
 	private int[][] terrain;
 	private int[][] characters;
-	private ArrayList<Entity> enemies = new ArrayList<>();
+	private ArrayList<Enemy> enemies = new ArrayList<>();
 	private ArrayList<Bullet> bullets = new ArrayList<>(); 
 	private Player player;
 
@@ -83,6 +83,8 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 		}
 
 		player = new Player(11, 11, 3, 1, 1);
+		
+		enemies.add(new Enemy(13, 14, 1, 0, 2));
 
 		for (Entity entity : enemies)
 		{
@@ -130,6 +132,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 			for (int j = 0; j < characters[i].length; j++)
 			{
 				if (characters[i][j] == 0) continue;
+				boolean small = false;
 				switch (characters[i][j])
 				{
 				case 1:
@@ -146,9 +149,10 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 					break;
 				case -1:
 					g.setColor(Color.darkGray);
+					small = true;
 					break;
 				}
-				g.fillOval(j * 32, i * 32, 32, 32);
+				g.fillOval(j * 32 + (small ? 8 : 0), i * 32 + (small ? 8 : 0), (small ? 16 : 32), (small ? 16 : 32));
 			}
 		}
 
@@ -177,34 +181,35 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 					yAug = 1;
 					break;
 				}
+				
 				if (keys[KeyEvent.VK_SPACE])
 				{
-//					if (shootCD == 0)
-//					{
+					if (shootCD == 0)
+					{
 						bullets.add(new Bullet(player.x_pos + xAug, player.y_pos + yAug, -1, (xAug == 0 ? yAug : xAug), xAug == 0));
-//					}
-//					shootCD++;
+					}
+					shootCD++;
 				}
-//				if (shootCD == 2) shootCD = 0;
+				if (shootCD == 16) shootCD = 0;
 
 				if (moveCD == 0)
 				{
-					if(keys[KeyEvent.VK_W] && terrain[player.x_pos][player.y_pos - 1] != 0)
+					if(keys[KeyEvent.VK_W] && terrain[player.x_pos - 1][player.y_pos] != 0)
 					{
 						int[] a = player.move(-1, 0);
 						characters[a[0]][a[1]] = 0;
 					}
-					if(keys[KeyEvent.VK_S] && terrain[player.x_pos][player.y_pos + 1] != 0)
+					if(keys[KeyEvent.VK_S] && terrain[player.x_pos + 1][player.y_pos] != 0)
 					{
 						int[] a = player.move(1, 0);
 						characters[a[0]][a[1]] = 0;
 					}
-					if(keys[KeyEvent.VK_A] && terrain[player.x_pos - 1][player.y_pos] != 0)
+					if(keys[KeyEvent.VK_A] && terrain[player.x_pos][player.y_pos - 1] != 0)
 					{
 						int[] a = player.move(0, -1);
 						characters[a[0]][a[1]] = 0;
 					}
-					if(keys[KeyEvent.VK_D] && terrain[player.x_pos + 1][player.y_pos] != 0)
+					if(keys[KeyEvent.VK_D] && terrain[player.x_pos][player.y_pos + 1] != 0)
 					{
 						int[] a = player.move(0, 1);
 						characters[a[0]][a[1]] = 0;
@@ -220,7 +225,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 				}
 
 				characters[player.x_pos][player.y_pos] = 1;
-				for (Entity entity : enemies)
+				for (Enemy entity : enemies)
 				{
 					int x = entity.x_pos;
 					int y = entity.y_pos;
@@ -228,6 +233,11 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 					{
 						characters[x][y] = entity.keyValue;
 					}
+					for (Bullet b : bullets)
+					{
+						if (b.x_pos == x && b.y_pos == y) entity.takeDamage(b.dmg);
+					}
+//					if (entity.die()) enemies.remove(entity); // throws concurrent modification exception
 				}
 
 				if (bullets.size() > 0) // check if there are bullets
@@ -236,11 +246,14 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 					{
 						int x = bullets.get(i).x_pos;
 						int y = bullets.get(i).y_pos;
-						characters[x][y] = bullets.get(i).keyValue; // update characters array
-						if (x < 1 || x > terrain.length - 1 || y < 1 || y > terrain[0].length - 1)
+						
+						if (x <= 0 || x >= terrain.length - 1 || y <= 0 || y >= terrain[0].length - 1)
 						{ // remove out of bounds bullets
 							bullets.remove(i);
+							characters[x][y] = 0;
 						}
+						
+						if (i < bullets.size()) characters[x][y] = bullets.get(i).keyValue; // update characters array
 					}
 				}
 
