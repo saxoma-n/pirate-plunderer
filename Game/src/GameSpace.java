@@ -7,8 +7,8 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -54,10 +54,9 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 			{0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0},
 			{0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0},
 			{0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0},
-			{0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0},
-			{0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0},
-			{0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0},
+			{0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
@@ -200,7 +199,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 				{
 					if (shootCD == 0)
 					{
-						bullets.add(new Bullet(player.x_pos + xAug, player.y_pos + yAug, -1, (xAug == 0 ? yAug : xAug), xAug == 0));
+						bullets.add(new Bullet(player.x_pos, player.y_pos, -1, (xAug == 0 ? yAug : xAug), xAug == 0));
 					}
 					shootCD++;
 				}
@@ -250,62 +249,79 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 				}
 				if (digCD == 100) digCD = 0;
 
-
+				// Move bullets and clear previous positions
 				for (Bullet e: bullets)
 				{
 					int[] a = e.move();
 					characters[a[0]][a[1]] = 0;
 				}
-				for (Enemy e: enemies)
-				{
-					if (enemyMoveCD == 0)
-					{
-						int[] a = e.move(player.x_pos, player.y_pos);
-						characters[a[0]][a[1]] = 0;
-					}
-					enemyMoveCD++;
-				}
-				if (enemyMoveCD == 8) enemyMoveCD = 0;
 
-				characters[player.x_pos][player.y_pos] = 1;
-				Iterator<Enemy> iterator = enemies.iterator(); // got this idea from Google
-				while (iterator.hasNext())
-				{ // basically a for loop, but this solves certain issues
-					Enemy entity = iterator.next();
-					int x = entity.x_pos;
-					int y = entity.y_pos;
-					if (x > 0 && x < terrain.length - 1 && y > 0 && y < terrain[0].length - 1) characters[x][y] = entity.keyValue;
+				// Check bullet collisions on enemies and player immediately after bullet move
+				Iterator<Enemy> enemyIterator = enemies.iterator();
+				while (enemyIterator.hasNext())
+				{
+					Enemy enemy = enemyIterator.next();
+					int x = enemy.x_pos;
+					int y = enemy.y_pos;
+
 					for (Bullet b : bullets)
 					{
 						if (b.x_pos == x && b.y_pos == y)
 						{
-							entity.takeDamage(b.dmg);
+							enemy.takeDamage(b.dmg);
 							b.takeDamage(1);
 						}
 						if (b.x_pos == player.x_pos && b.y_pos == player.y_pos) player.takeDamage(b.dmg);
 					}
-					if (entity.die()) iterator.remove(); // remove the enemy without throwing a concurrent modification exception
+					if (enemy.die()) enemyIterator.remove();
 				}
 
-				Iterator<Bullet> iterator1 = bullets.iterator();
-				while (iterator1.hasNext())
+				// Now move enemies
+				if (enemyMoveCD == 0)
 				{
-					Bullet b = iterator1.next();
+					for (Enemy e: enemies)
+					{
+						int[] a = e.move(player.x_pos, player.y_pos);
+						characters[a[0]][a[1]] = 0;
+					}
+				}
+
+				enemyMoveCD++;
+				if (enemyMoveCD == 8) enemyMoveCD = 0;
+
+				characters[player.x_pos][player.y_pos] = 1;
+
+				// Update enemies positions in characters array
+				for (Enemy e : enemies)
+				{
+					int x = e.x_pos;
+					int y = e.y_pos;
+					if (x > 0 && x < terrain.length - 1 && y > 0 && y < terrain[0].length - 1)
+						characters[x][y] = e.keyValue;
+				}
+
+				// Remove bullets if dead or out of bounds
+				Iterator<Bullet> bulletIterator = bullets.iterator();
+				while (bulletIterator.hasNext())
+				{
+					Bullet b = bulletIterator.next();
 					int x = b.x_pos;
 					int y = b.y_pos;
-					if (x > 0 && x < terrain.length - 1 && y > 0 && y < terrain[0].length - 1) characters[x][y] = b.keyValue;
+					if (x > 0 && x < terrain.length - 1 && y > 0 && y < terrain[0].length - 1)
+					{
+						characters[x][y] = b.keyValue;
+					}
 					if (x <= 0 || x >= terrain.length - 1 || y <= 0 || y >= terrain[0].length - 1)
-					{ // remove out of bounds bullets
-						iterator1.remove();
+					{
+						bulletIterator.remove();
 						characters[x][y] = 0;
 					}
 					if (b.die())
 					{
 						characters[b.x_pos][b.y_pos] = 0;
-						iterator1.remove();
+						bulletIterator.remove();
 					}
 				}
-
 
 				repaint();
 				Thread.sleep(20);
