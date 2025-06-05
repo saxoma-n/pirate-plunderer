@@ -1,4 +1,4 @@
-public abstract class Entity
+public class Entity
 {
 // superclass for all entities (i.e. player, enemies, bullets, etc.)
     protected int hp;
@@ -52,7 +52,10 @@ public abstract class Entity
         if (hp <= 0) die();
     }
 
-    public abstract boolean die();
+    public boolean die()
+    {
+    	return hp <= 0;
+    }
 
     public int[] move(int x, int y)
     {

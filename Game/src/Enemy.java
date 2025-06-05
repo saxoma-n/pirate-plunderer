@@ -1,0 +1,18 @@
+
+public class Enemy extends Entity
+{
+    
+	public Enemy(int x, int y, int hp, int dmg, int keyValue)
+	{
+		super(x, y, hp, dmg, keyValue);
+	}
+
+	public int[] move(int x, int y)
+	{
+		if (Math.random() > 0.5) // basically a coin flip to either move horizontally or vertically
+		{
+			return super.move((x > x_pos ? 1 : -1), 0);
+		}
+		return super.move(0, (y > y_pos ? 1 : -1));
+	}
+}

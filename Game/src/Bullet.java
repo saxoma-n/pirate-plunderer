@@ -26,7 +26,7 @@ public class Bullet extends Entity
 	@Override
 	public boolean die()
 	{
-		return true;
+		return hp <= 0;
 	}
 
 }

@@ -1,17 +1,22 @@
 public class Player extends Entity
-{
+{// player class
+	
+	/** Player constructor
+	 * 
+	 * @param x
+	 * @param y
+	 * @param hp
+	 * @param dmg
+	 * @param keyValue
+	 */
     public Player (int x, int y, int hp, int dmg, int keyValue)
     {
         super(x, y, hp, dmg, keyValue);
     }
     
-    public boolean die()
+    public int dig (int x)
     {
-        if (hp == 0)
-        {
-            /* Die code */
-            return true;
-        }
-        return false;
+    	if (x == 3) return 4;
+    	return x;
     }
 }
