@@ -18,7 +18,6 @@ public class Entity
      * @param hp
      * @param dmg
      * @param keyValue
-     * @param img
      */
     public Entity (int x, int y, int hp, int dmg, int keyValue)
     {

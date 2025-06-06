@@ -12,7 +12,6 @@ public class Bullet extends Entity
 	 * @param keyValue
 	 * @param velocity positive if right/down, negative if left/up
 	 * @param direction true if up/down, false if left/right
-	 * @param img
 	 */
 	public Bullet(int x, int y, int keyValue, int velocity, boolean direction)
 	{

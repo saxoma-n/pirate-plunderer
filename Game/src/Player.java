@@ -10,7 +10,6 @@ public class Player extends Entity
 	 * @param hp
 	 * @param dmg
 	 * @param keyValue
-	 * @param img
 	 */
     public Player (int x, int y, int hp, int dmg, int keyValue)
     {

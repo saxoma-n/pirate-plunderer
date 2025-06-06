@@ -9,7 +9,6 @@ public class Enemy extends Entity
 	 * @param hp
 	 * @param dmg
 	 * @param keyValue
-	 * @param img
 	 */
 	public Enemy(int x, int y, int hp, int dmg, int keyValue)
 	{
