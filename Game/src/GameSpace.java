@@ -1,3 +1,8 @@
+/* Ekansh Nama, Michael Unguryan
+ * 6/6/25
+ * Period 9
+ */
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -9,10 +14,8 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -21,27 +24,25 @@ import javax.swing.JFrame;
 public class GameSpace extends JComponent implements Runnable, KeyListener
 {
 
-	private int[][] terrain;
+	private int[][] terrain; // grid-based movment system
 	private int[][] characters;
 	private BufferedImage[][] terrainImages; // Store images assigned for terrain tiles
-	private ArrayList<Enemy> enemies = new ArrayList<>();
-	private ArrayList<Bullet> bullets = new ArrayList<>(); 
-	private Player player;
+	private ArrayList<Enemy> enemies = new ArrayList<>(); // handle enemies
+	private ArrayList<Bullet> bullets = new ArrayList<>(); // handle bullets
+	private Player player; // player
 
-	private Sound bang, move, oof, oofSlow, pirateOof, dig, song;
+	private Sound bang, move, oof, oofSlow, pirateOof, dig, song, danger; // sounds and images
 	private BufferedImage pirate, cowboy, treasure, hp, sand1, sand2, sand3, grass1, grass2, grass3;
 
-	private boolean gameOver = false, started = true;
+	private boolean gameOver = false, started = true, endangered = false; // end the game, start the song, check if danger sound has been played
 
-	private boolean[] keys = new boolean[256];
+	private boolean[] keys = new boolean[256]; // track key input
 
-	private int moveCD = 0;
+	private int moveCD = 0; // cooldowns for all actions to make a tick-based system
 	private int shootCD = 0;
 	private int digCD = 0;
-
 	private int enemyMoveCD = 0;
-
-	private int enemyDamageCD = 0; // Added cooldown for enemy damage to player
+	private int enemyDamageCD = 0;
 
 	private int score = 0;
 
@@ -95,6 +96,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 			oofSlow = new Sound("C:\\Users\\27name01\\Downloads\\oofslow.wav");
 			pirateOof = new Sound("C:\\Users\\27name01\\Downloads\\pirateoof.wav");
 			dig = new Sound("C:\\Users\\27name01\\Downloads\\dig.wav");
+			danger = new Sound("C:\\Users\\27name01\\Downloads\\danger.wav");
 			song = new Sound("C:\\Users\\27name01\\Downloads\\song.wav");
 		}
 		catch(IOException | IllegalArgumentException e)
@@ -104,14 +106,14 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 
 		characters = new int[terrain.length][terrain[0].length];
 		for (int i = 0; i < terrain.length; i++)
-		{
+		{ // initialize the character array
 			for (int j = 0; j < terrain[i].length; j++)
 			{
 				characters[i][j] = 0;
 			}
 		}
 
-		player = new Player(11, 11, 3, 1, 1);
+		player = new Player(11, 11, 3, 1, 1); // add player
 
 		assignTreasureSpots();
 		initializeTerrainImages();
@@ -129,24 +131,17 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 
 	private void assignTreasureSpots()
 	{
-		Random rand = new Random();
-		Set<String> usedPositions = new HashSet<>();
-		int assigned = 0;
-		while (assigned < 3)
-		{
-			int x = rand.nextInt(terrain.length);
-			int y = rand.nextInt(terrain[0].length);
-			if (terrain[x][y] == 1)
-			{
-				String key = x + "," + y;
-				if (!usedPositions.contains(key))
-				{
-					terrain[x][y] = 3; // treasure spot
-					usedPositions.add(key);
-					assigned++;
-				}
-			}
-		}
+	    int assigned = 0;
+	    while (assigned < 3) // safeguard iteration limit to avoid infinite loop
+	    {
+	        int x = (int) (Math.random() * terrain.length);
+	        int y = (int) (Math.random() * terrain[0].length);
+	        if (terrain[x][y] == 1)
+	        {
+	            terrain[x][y] = 3; // treasure spot
+	            assigned++;
+	        }
+	    }
 	}
 
 	private void initializeTerrainImages()
@@ -302,13 +297,20 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 
 		if (!gameOver)
 		{
-			g.setColor(new Color(0x2563EB));
+			g.setColor(Color.white);
 			g.setFont(g.getFont().deriveFont(Font.BOLD, 32f));
 			String scoreText = "Score: " + score;
 			FontMetrics metrics = g.getFontMetrics(g.getFont());
 			int xScore = (getWidth() - metrics.stringWidth(scoreText)) / 2;
 			int yScore = metrics.getHeight() + 15;
 			g.drawString(scoreText, xScore, yScore);
+			
+			g.setFont(g.getFont().deriveFont(Font.BOLD, 24f));
+			String powerupText = "Damage: " + (1 + score/300) + ", Piercing: " + (score/500);
+			FontMetrics metrics1 = g.getFontMetrics(g.getFont());
+			int xPower = getWidth() - metrics.stringWidth(powerupText) - 15;
+			int yPower = metrics.getHeight() + 15;
+			g.drawString(powerupText, xPower, yPower);
 		}
 
 		if (gameOver)
@@ -362,7 +364,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 				{
 					if (shootCD == 0)
 					{
-						bullets.add(new Bullet(player.x_pos, player.y_pos, -1, (xAug == 0 ? yAug : xAug), xAug == 0));
+						bullets.add(new Bullet(player.x_pos, player.y_pos, 1 + score/500, 1 + score/300, -1, (xAug == 0 ? yAug : xAug), xAug == 0));
 						bang.makeSound();
 					}
 					shootCD++;
@@ -406,9 +408,10 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 
 				if (keys[KeyEvent.VK_Z]) // dig for treasure
 				{
-					dig.makeSound();
+					
 					if (digCD == 0)
 					{
+						dig.makeSound();
 						for (int i = 0; i < terrain.length; i++)
 						{
 							for (int j = 0; j < terrain[i].length; j++)
@@ -427,7 +430,8 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 								int[] spawnPos = getValidEnemySpawnPosition();
 								enemies.add(new Enemy(spawnPos[0], spawnPos[1], score/100, 1, 2));
 							}
-							updateTerrain(player.x_pos, player.y_pos, 4);
+							// Change here: replace treasure spot 3 with 1 instead of 4 when dug
+							updateTerrain(player.x_pos, player.y_pos, 1);
 
 							int x = (int)(Math.random() * 14) + 3;
 							int y = (int)(Math.random() * 27) + 6;
@@ -438,6 +442,12 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 					digCD++;
 				}
 				if (digCD == 100) digCD = 0;
+				
+				if (player.hp == 1 && !endangered)
+				{ // play the danger sound when hp = 1
+	                danger.makeSound();
+	                endangered = true;
+	            }
 
 				for (Bullet e: bullets)
 				{
