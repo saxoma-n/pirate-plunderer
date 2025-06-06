@@ -12,8 +12,8 @@ public class Player extends Entity
 	 * @param keyValue
 	 * @param img
 	 */
-    public Player (int x, int y, int hp, int dmg, int keyValue/*, BufferedImage img*/)
+    public Player (int x, int y, int hp, int dmg, int keyValue)
     {
-        super(x, y, hp, dmg, keyValue/*, img*/);
+        super(x, y, hp, dmg, keyValue);
     }
 }

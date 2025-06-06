@@ -11,9 +11,9 @@ public class Enemy extends Entity
 	 * @param keyValue
 	 * @param img
 	 */
-	public Enemy(int x, int y, int hp, int dmg, int keyValue/*, BufferedImage img*/)
+	public Enemy(int x, int y, int hp, int dmg, int keyValue)
 	{
-		super(x, y, hp, dmg, keyValue/*, img*/);
+		super(x, y, hp, dmg, keyValue);
 	}
 	
 	public int[] move(int x, int y)

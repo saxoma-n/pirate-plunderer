@@ -14,9 +14,9 @@ public class Bullet extends Entity
 	 * @param direction true if up/down, false if left/right
 	 * @param img
 	 */
-	public Bullet(int x, int y, int keyValue, int velocity, boolean direction/*, BufferedImage img*/)
+	public Bullet(int x, int y, int keyValue, int velocity, boolean direction)
 	{
-		super(x, y, 1, 1, keyValue/*, img*/);
+		super(x, y, 1, 1, keyValue);
 		this.direction = direction;
 		this.velocity = velocity;
 	}

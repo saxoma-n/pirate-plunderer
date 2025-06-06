@@ -10,8 +10,6 @@ public class Entity
     protected String direction;
 
     protected int keyValue;
-    
-    //protected BufferedImage img;
 
     /**Entity superclass constructor
      * 
@@ -22,7 +20,7 @@ public class Entity
      * @param keyValue
      * @param img
      */
-    public Entity (int x, int y, int hp, int dmg, int keyValue/*, BufferedImage img*/)
+    public Entity (int x, int y, int hp, int dmg, int keyValue)
     {
         x_pos = x;
         y_pos = y;
@@ -30,7 +28,6 @@ public class Entity
         this.dmg = dmg;
         this.keyValue = keyValue;
         direction = "down";
-        //this.img = img;
     }
 
     public void takeDamage(int amount)
