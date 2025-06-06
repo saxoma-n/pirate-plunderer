@@ -1,3 +1,8 @@
+/* Ekansh Nama, Michael Unguryan
+ * 6/6/25
+ * Period 9
+ */
+
 import java.awt.image.BufferedImage;
 
 public class Enemy extends Entity
@@ -10,12 +15,12 @@ public class Enemy extends Entity
 	 * @param dmg
 	 * @param keyValue
 	 */
-	public Enemy(int x, int y, int hp, int dmg, int keyValue)
+	public Enemy(int x, int y, int hp, int dmg, int keyValue, BufferedImage img)
 	{
-		super(x, y, hp, dmg, keyValue);
+		super(x, y, hp, dmg, keyValue, img);
 	}
 	
-	public int[] move(int x, int y)
+	public int[] move(int x, int y) // automatic movement
 	{
 		if (Math.random() > 0.5) // basically a coin flip to either move horizontally or vertically
 		{

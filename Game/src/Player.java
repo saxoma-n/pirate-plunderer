@@ -1,3 +1,8 @@
+/* Ekansh Nama, Michael Unguryan
+ * 6/6/25
+ * Period 9
+ */
+
 import java.awt.image.BufferedImage;
 
 public class Player extends Entity
@@ -11,8 +16,8 @@ public class Player extends Entity
 	 * @param dmg
 	 * @param keyValue
 	 */
-    public Player (int x, int y, int hp, int dmg, int keyValue)
+    public Player (int x, int y, int hp, int dmg, int keyValue, BufferedImage img)
     {
-        super(x, y, hp, dmg, keyValue);
+        super(x, y, hp, dmg, keyValue, img);
     }
 }
