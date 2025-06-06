@@ -23,7 +23,6 @@ import javax.swing.JFrame;
 
 public class GameSpace extends JComponent implements Runnable, KeyListener
 {
-
 	private int[][] terrain; // grid-based movment system
 	private int[][] characters;
 	private BufferedImage[][] terrainImages; // Store images assigned for terrain tiles
@@ -32,9 +31,9 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 	private Player player; // player
 
 	private Sound bang, move, oof, oofSlow, pirateOof, dig, song, danger; // sounds and images
-	private BufferedImage pirate, cowboy, treasure, hp, sand1, sand2, sand3, grass1, grass2, grass3;
+	private BufferedImage pirate, cowboy, treasure, openTreasure, hp, sand1, sand2, sand3, grass1, grass2, grass3;
 
-	private boolean gameOver = false, started = true, endangered = false; // end the game, start the song, check if danger sound has been played
+	private boolean died = false, escaped = false, started = true, endangered = false; // end the game, start the song, check if danger sound has been played
 
 	private boolean[] keys = new boolean[256]; // track key input
 
@@ -81,7 +80,8 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 		{ // Load images + sounds
 			pirate = ImageIO.read(GameSpace.class.getResourceAsStream("pirate.jpg"));
 			cowboy = ImageIO.read(GameSpace.class.getResourceAsStream("cowboy.jpg"));
-			//treasure = ImageIO.read(GameSpace.class.getResourceAsStream("treasure.jpg"));
+			treasure = ImageIO.read(GameSpace.class.getResourceAsStream("marked.png"));
+			openTreasure = ImageIO.read(GameSpace.class.getResourceAsStream("opentreasure.png"));
 			hp = ImageIO.read(GameSpace.class.getResourceAsStream("hp.png"));
 			sand1 = ImageIO.read(GameSpace.class.getResourceAsStream("sand1.png"));
 			sand2 = ImageIO.read(GameSpace.class.getResourceAsStream("sand2.png"));
@@ -235,6 +235,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 			for (int j = 0; j < terrain[i].length; j++)
 			{
 				BufferedImage draw = terrainImages[i][j];
+				boolean drawbg = false;
 				switch (terrain[i][j])
 				{
 				case 0:
@@ -246,13 +247,15 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 					g.setColor(new Color(0x97C682));
 					break;
 				case 3:
-					g.setColor(Color.yellow.darker());
+					draw = treasure;
 					break;
 				case 4:
-					g.setColor(new Color(0xFBC8D4));
+					drawbg = true;
+					draw = openTreasure;
 					break;
 				}
 				g.fillRect(j * 32, i * 32, 32, 32);
+				if (drawbg) g.drawImage(sand1, j*32, i*32, 32, 32, null);
 				if (draw != null) g.drawImage(draw, j * 32, i * 32, 32, 32, null);
 			}
 		}
@@ -295,7 +298,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 			}
 		}
 
-		if (!gameOver)
+		if (!died)
 		{
 			g.setColor(Color.white);
 			g.setFont(g.getFont().deriveFont(Font.BOLD, 32f));
@@ -313,7 +316,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 			g.drawString(powerupText, xPower, yPower);
 		}
 
-		if (gameOver)
+		if (died)
 		{
 			g.setColor(new Color(0xDC2626));
 			g.setFont(g.getFont().deriveFont(Font.BOLD, 64f));
@@ -341,7 +344,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 			{
 				if (started || song.isEnded()) song.makeSound();
 				started = false;
-				if (gameOver) song.stop();
+				if (died) song.stop();
 
 				int xAug = 0, yAug = 0;
 				switch (player.direction)
@@ -430,8 +433,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 								int[] spawnPos = getValidEnemySpawnPosition();
 								enemies.add(new Enemy(spawnPos[0], spawnPos[1], score/100, 1, 2));
 							}
-							// Change here: replace treasure spot 3 with 1 instead of 4 when dug
-							updateTerrain(player.x_pos, player.y_pos, 1);
+							updateTerrain(player.x_pos, player.y_pos, 4);
 
 							int x = (int)(Math.random() * 14) + 3;
 							int y = (int)(Math.random() * 27) + 6;
@@ -540,12 +542,12 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 				if (player.die())
 				{
 					oofSlow.makeSound();
-					gameOver = true;
+					died = true;
 				}
 
 				repaint();
 				Thread.sleep(Math.max(5, 20 - (score / 400)));
-				if (gameOver) break;
+				if (died) break;
 
 			}
 			catch (InterruptedException e)
@@ -562,7 +564,7 @@ public class GameSpace extends JComponent implements Runnable, KeyListener
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
-		keys[e.getKeyCode()] = true;
+		if (e.getKeyCode() < 256) keys[e.getKeyCode()] = true;
 	}
 
 	@Override
