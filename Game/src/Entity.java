@@ -1,3 +1,5 @@
+import java.awt.image.BufferedImage;
+
 public class Entity
 {
 // superclass for all entities (i.e. player, enemies, bullets, etc.)
@@ -8,8 +10,19 @@ public class Entity
     protected String direction;
 
     protected int keyValue;
+    
+    //protected BufferedImage img;
 
-    public Entity (int x, int y, int hp, int dmg, int keyValue)
+    /**Entity superclass constructor
+     * 
+     * @param x
+     * @param y
+     * @param hp
+     * @param dmg
+     * @param keyValue
+     * @param img
+     */
+    public Entity (int x, int y, int hp, int dmg, int keyValue/*, BufferedImage img*/)
     {
         x_pos = x;
         y_pos = y;
@@ -17,33 +30,7 @@ public class Entity
         this.dmg = dmg;
         this.keyValue = keyValue;
         direction = "down";
-    }
-
-    public int getHp()
-    {
-        return hp;
-    }
-    public int getXPos()
-    {
-    	return x_pos;
-    }
-    public int getYPos()
-    {
-    	return y_pos;
-    }
-    public void setHp(int hp)
-    {
-        this.hp = hp;
-    }
-
-    public int getDmg()
-    {
-        return dmg;
-    }
-
-    public void setDmg(int dmg)
-    {
-        this.dmg = dmg;
+        //this.img = img;
     }
 
     public void takeDamage(int amount)
