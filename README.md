@@ -1,2 +1,2 @@
 # pirate plunderer
-priat plunderer game repo
+pirate plunderer game repo
